@@ -7,6 +7,7 @@ import com.kleim.pets_owners.service.PetService;
 import com.kleim.pets_owners.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +29,9 @@ public class PetController {
     public ResponseEntity<PetDTO> createPet(
            @RequestBody Pet petToCreate
     ) {
+        log.info("..");
+        var createdPet = petService.createPet(petToCreate);
 
-        var createPet = petService.createPet(petToCreate);
-        return null;
+        return ResponseEntity.status(HttpStatus.CREATED).body(petConverter.toPetDTO(createdPet));
     }
 }
