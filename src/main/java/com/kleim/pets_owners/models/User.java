@@ -7,6 +7,6 @@ public record User(
         String name,
         String email,
         Integer age,
-        List<PetDTO> petsList
+        List<Pet> petsList
 ) {
 }

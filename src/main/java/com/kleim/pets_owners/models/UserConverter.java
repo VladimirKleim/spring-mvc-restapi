@@ -2,27 +2,34 @@ package com.kleim.pets_owners.models;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class UserConverter {
 
+    public final PetConverter petConverter;
+
+    public UserConverter(PetConverter petConverter) {
+        this.petConverter = petConverter;
+    }
+
     public User toUser(UserDTO userDTO) {
-      User user =  new User(
-                userDTO.id(),
-                userDTO.name(),
-                userDTO.email(),
-                userDTO.age(),
-                userDTO.petsList()
-        );
-      return user;
+        return new User(
+                  userDTO.id(),
+                  userDTO.name(),
+                  userDTO.email(),
+                  userDTO.age(),
+                  userDTO.petsList().stream().map(petConverter::toPet).toList()
+          );
     }
 
     public UserDTO toDtoUser(User user) {
-      UserDTO userDTO = new UserDTO(user.id(),
-        user.name(),
-        user.email(),
-        user.age(),
-        user.petsList()
-      );
-      return userDTO;
+        return new UserDTO(user.id(),
+          user.name(),
+          user.email(),
+          user.age(),
+          user.petsList().stream().map(petConverter::toPetDTO).toList()
+        );
     }
+
 }

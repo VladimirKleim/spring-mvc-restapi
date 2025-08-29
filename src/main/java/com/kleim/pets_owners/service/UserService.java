@@ -4,22 +4,29 @@ package com.kleim.pets_owners.service;
 
 import com.kleim.pets_owners.models.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Service
 public class UserService {
-    private AtomicLong atomicInteger = new AtomicLong();
+
+    private final AtomicLong atomicInteger;
     private final Map<Long, User> userMap;
 
     public UserService() {
+        this.atomicInteger = new AtomicLong();
         this.userMap = new HashMap<>();
     }
 
     public User createUser(User userToCreate) {
         if (userToCreate.id() != null) {
             throw new IllegalArgumentException("User id not should be provided");
+        }
+        if (userToCreate.petsList() != null && !userToCreate.petsList().isEmpty()) {
+            throw new IllegalArgumentException("User pets must be empty");
         }
        var userId = atomicInteger.incrementAndGet();
         User user = new User(
@@ -38,6 +45,9 @@ public class UserService {
     }
 
     public User findUserById(Long id) {
+        if  (!userMap.containsKey(id)) {
+            throw new NoSuchElementException("No such user with id=%s".formatted(id));
+        }
         return userMap.get(id);
     }
 
@@ -53,13 +63,12 @@ public class UserService {
         if (userId == null) {
             throw new NoSuchElementException("Not found user with id: %s".formatted(userId));
         }
-        var newUser = new User(
+        return new User(
                 id,
                 userToUpdate.name(),
                 userToUpdate.email(),
                 userToUpdate.age(),
-                userToUpdate.petsList()
+                new ArrayList<>()
         );
-        return newUser;
     }
 }

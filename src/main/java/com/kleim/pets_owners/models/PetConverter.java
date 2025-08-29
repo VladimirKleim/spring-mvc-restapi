@@ -3,6 +3,7 @@ package com.kleim.pets_owners.models;
 import org.springframework.stereotype.Component;
 
 @Component
+
 public class PetConverter {
     public Pet toPet(PetDTO petDTO) {
         return new Pet(

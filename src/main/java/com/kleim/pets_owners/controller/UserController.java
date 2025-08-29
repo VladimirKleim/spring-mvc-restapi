@@ -6,6 +6,7 @@ import com.kleim.pets_owners.models.UserConverter;
 import com.kleim.pets_owners.models.UserDTO;
 
 import com.kleim.pets_owners.service.UserService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -18,16 +19,18 @@ import java.util.List;
 public class UserController {
 
     private final Logger log = LoggerFactory.getLogger(UserController.class);
-    private final UserService userService = new UserService();
+    private final UserService userService;
     private final UserConverter userConverter;
 
-    public UserController(UserConverter userConverter) {
+    public UserController(UserService userService, UserConverter userConverter) {
+        this.userService = userService;
         this.userConverter = userConverter;
     }
 
+
     @PostMapping
-    private ResponseEntity<UserDTO> createUser(
-            @RequestBody UserDTO userToCreate
+    public ResponseEntity<UserDTO> createUser(
+            @RequestBody @Valid UserDTO userToCreate
     ) {
       log.info("Got request to created user ");
       var createdUser = userService.createUser(userConverter.toUser(userToCreate));
@@ -36,7 +39,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/users")
+    @GetMapping()
     public List<User> getAllUsers() {
         log.info("Got users list ");
         var getAll = userService.getAllUsers();
@@ -51,7 +54,7 @@ public class UserController {
         log.info("Got request to find user by id ");
        var getUser = userService.findUserById(id);
 
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(userConverter.toDtoUser(getUser));
+      return ResponseEntity.ok(userConverter.toDtoUser(getUser));
     }
 
 
@@ -62,19 +65,19 @@ public class UserController {
         log.info("Got request to delete user by id ");
         userService.deleteUser(id);
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.ok().build();
     }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable("id") Long id,
-            @RequestBody UserDTO userToUpdate
+            @RequestBody @Valid UserDTO userDTO
     ) {
         log.info("Got request to update user");
-        var updatedUser = userService.updateUser(id, userConverter.toUser(userToUpdate));
+        var updatedUser = userService.updateUser(id, userConverter.toUser(userDTO));
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userConverter.toDtoUser(updatedUser));
+        return ResponseEntity.ok().body(userConverter.toDtoUser(updatedUser));
     }
 }
 
