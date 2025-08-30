@@ -1,10 +1,7 @@
-package com.kleim.pets_owners.models;
+package com.kleim.pets_owners.models.pet;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.springframework.stereotype.Service;
 
 
 public record PetDTO(

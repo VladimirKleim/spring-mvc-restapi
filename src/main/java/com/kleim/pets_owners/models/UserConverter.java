@@ -1,8 +1,8 @@
 package com.kleim.pets_owners.models;
 
+import com.kleim.pets_owners.models.user.User;
+import com.kleim.pets_owners.models.user.UserDTO;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class UserConverter {
@@ -13,6 +13,7 @@ public class UserConverter {
         this.petConverter = petConverter;
     }
 
+
     public User toUser(UserDTO userDTO) {
         return new User(
                   userDTO.id(),
@@ -22,6 +23,7 @@ public class UserConverter {
                   userDTO.petsList().stream().map(petConverter::toPet).toList()
           );
     }
+
 
     public UserDTO toDtoUser(User user) {
         return new UserDTO(user.id(),

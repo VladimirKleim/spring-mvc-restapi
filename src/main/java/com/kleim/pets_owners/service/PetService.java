@@ -1,10 +1,8 @@
 package com.kleim.pets_owners.service;
 
-import com.kleim.pets_owners.models.Pet;
-import com.kleim.pets_owners.models.PetDTO;
+import com.kleim.pets_owners.models.pet.Pet;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -34,10 +32,12 @@ public class PetService {
          return newPet;
     }
 
+
     public Pet getPet(Long id) {
         return getPetById(id).orElseThrow(() ->
                 new IllegalArgumentException("No found pet by id: %s".formatted(id)));
     }
+
 
     public Optional<Pet> getPetById(Long id) {
         return userService.getAllUsers().stream()
@@ -46,12 +46,14 @@ public class PetService {
                 .findAny();
     }
 
+
     public void deletePetById(Long id) {
         var pet = getPetById(id).orElseThrow(()-> new IllegalArgumentException("Pet with id %s not found".formatted(id)));
         var user = userService.findUserById(pet.id());
 
         user.petsList().remove(pet);
     }
+
 
     public Pet updatePet(Long id, Pet petToUpdate) {
         var petId = getPetById(id).orElseThrow(()-> new IllegalArgumentException("Pet with id %s not found".formatted(id)));
@@ -64,4 +66,5 @@ public class PetService {
         userService.findUserById(pet.userId()).petsList().add(pet);
         return pet;
     }
+
 }

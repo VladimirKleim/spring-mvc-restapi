@@ -1,27 +1,32 @@
 package com.kleim.pets_owners.controller;
 
 
-import com.kleim.pets_owners.models.User;
+import com.kleim.pets_owners.models.user.User;
 import com.kleim.pets_owners.models.UserConverter;
-import com.kleim.pets_owners.models.UserDTO;
-
+import com.kleim.pets_owners.models.user.UserDTO;
 import com.kleim.pets_owners.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
+
 @RequestMapping("/users")
 @RestController
 public class UserController {
 
     private final Logger log = LoggerFactory.getLogger(UserController.class);
+
     private final UserService userService;
+
     private final UserConverter userConverter;
 
+
+    @Autowired
     public UserController(UserService userService, UserConverter userConverter) {
         this.userService = userService;
         this.userConverter = userConverter;

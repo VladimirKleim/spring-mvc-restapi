@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ServerErrorDTO> handleNotFoundException(
             NoSuchElementException e
     ) {
-        var errorDTO = new ServerErrorDTO("Такого элемента не существует",
+        var errorDTO = new ServerErrorDTO("Ошибка поиска, такого энтити не существует",
                 e.getMessage(),
                 LocalDateTime.now()
                 );

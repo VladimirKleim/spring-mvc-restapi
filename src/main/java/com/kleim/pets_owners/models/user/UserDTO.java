@@ -1,10 +1,12 @@
-package com.kleim.pets_owners.models;
+package com.kleim.pets_owners.models.user;
 
+import com.kleim.pets_owners.models.pet.PetDTO;
 import jakarta.validation.constraints.*;
 
 import java.util.List;
 
 public record UserDTO (
+
         Long id,
 
         @NotBlank
@@ -20,5 +22,6 @@ public record UserDTO (
         Integer age,
 
         List<PetDTO> petsList
+
 ){
 }

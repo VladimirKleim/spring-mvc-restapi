@@ -2,12 +2,10 @@ package com.kleim.pets_owners.service;
 
 
 
-import com.kleim.pets_owners.models.User;
-import org.springframework.http.ResponseEntity;
+import com.kleim.pets_owners.models.user.User;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -20,6 +18,7 @@ public class UserService {
         this.atomicInteger = new AtomicLong();
         this.userMap = new HashMap<>();
     }
+
 
     public User createUser(User userToCreate) {
         if (userToCreate.id() != null) {
@@ -40,9 +39,11 @@ public class UserService {
         return user;
     }
 
+
     public List<User> getAllUsers() {
         return userMap.values().stream().toList();
     }
+
 
     public User findUserById(Long id) {
         if  (!userMap.containsKey(id)) {
@@ -51,12 +52,14 @@ public class UserService {
         return userMap.get(id);
     }
 
+
     public void deleteUser(Long id) {
         var userId = userMap.remove(id);
         if (userId == null) {
             throw new NoSuchElementException("Not found user");
         }
     }
+
 
     public User updateUser(Long id, User userToUpdate) {
         var userId = userMap.get(id);
@@ -71,4 +74,5 @@ public class UserService {
                 new ArrayList<>()
         );
     }
+
 }
