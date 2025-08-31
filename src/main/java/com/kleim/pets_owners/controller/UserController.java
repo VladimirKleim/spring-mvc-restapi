@@ -1,6 +1,7 @@
 package com.kleim.pets_owners.controller;
 
 
+import com.kleim.pets_owners.models.PetConverter;
 import com.kleim.pets_owners.models.user.User;
 import com.kleim.pets_owners.models.UserConverter;
 import com.kleim.pets_owners.models.user.UserDTO;
@@ -24,12 +25,13 @@ public class UserController {
     private final UserService userService;
 
     private final UserConverter userConverter;
+    private final PetConverter petConverter;
 
 
-    @Autowired
-    public UserController(UserService userService, UserConverter userConverter) {
+    public UserController(UserService userService, UserConverter userConverter, PetConverter petConverter) {
         this.userService = userService;
         this.userConverter = userConverter;
+        this.petConverter = petConverter;
     }
 
 
@@ -80,7 +82,14 @@ public class UserController {
             @RequestBody @Valid UserDTO userDTO
     ) {
         log.info("Got request to update user");
-        var updatedUser = userService.updateUser(id, userConverter.toUser(userDTO));
+        var userToUpdate = new User(
+                id,
+                userDTO.name(),
+                userDTO.email(),
+                userDTO.age(),
+                userDTO.petsList().stream().map(petConverter::toPet).toList()
+        );
+        var updatedUser = userService.updateUser(userToUpdate);
 
         return ResponseEntity.ok().body(userConverter.toDtoUser(updatedUser));
     }

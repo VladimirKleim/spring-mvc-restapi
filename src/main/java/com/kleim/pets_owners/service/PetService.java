@@ -1,6 +1,7 @@
 package com.kleim.pets_owners.service;
 
 import com.kleim.pets_owners.models.pet.Pet;
+import com.kleim.pets_owners.models.user.User;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,6 +29,10 @@ public class PetService {
                 petToCreate.name(),
                 petToCreate.userId()
         );
+        User user = userService.findUserById(petToCreate.userId());
+        if (user == null || petToCreate.userId() == null) {
+            throw new IllegalArgumentException("No such user with id: %s".formatted());
+        }
          userService.findUserById(petToCreate.userId()).petsList().add(newPet);
          return newPet;
     }

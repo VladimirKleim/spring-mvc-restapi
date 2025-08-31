@@ -61,18 +61,16 @@ public class UserService {
     }
 
 
-    public User updateUser(Long id, User userToUpdate) {
-        var userId = userMap.get(id);
-        if (userId == null) {
-            throw new NoSuchElementException("Not found user with id: %s".formatted(userId));
+    public User updateUser(User userToUpdate) {
+
+        if (userToUpdate.id() == null) {
+            throw new NoSuchElementException("Not found user with id: %s".formatted(userToUpdate));
         }
-        return new User(
-                id,
-                userToUpdate.name(),
-                userToUpdate.email(),
-                userToUpdate.age(),
-                new ArrayList<>()
-        );
+        if (!userMap.containsKey(userToUpdate.id())) {
+            throw new NoSuchElementException("No such user");
+        }
+        userMap.put(userToUpdate.id(), userToUpdate);
+        return userToUpdate;
     }
 
 }
