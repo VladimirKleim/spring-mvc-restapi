@@ -16,11 +16,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -93,5 +94,41 @@ class PetServiceTest {
         var petDtoResponse = objectMapper.readValue(petToJson, Pet.class);
         org.assertj.core.api.Assertions.assertThat(pet).usingRecursiveComparison().isEqualTo(petDtoResponse);
     }
+    @Test
+    void deletePetSuccess() throws Exception {
+        var pet = new PetDTO(
+                null,
+                "somy-body",
+                1L
+        );
+        String petJson = objectMapper.writeValueAsString(pet);
+        String deletePetJsonMax = mockMvc.perform(delete("/users/{id}", 0)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        Assertions.assertTrue(deletePetJsonMax.toLowerCase().contains("not found") || deletePetJsonMax.toLowerCase().contains("error"));
 
+    }
+
+
+    @Test
+    void updatePetValidSuccess() throws Exception {
+        var pet = new Pet(
+                1L,
+                "somy-body",
+                1L
+
+        );
+        String petJson = objectMapper.writeValueAsString(pet);
+        String deletePetJson = mockMvc.perform(put("/users/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        var updatedpet = objectMapper.readValue(deletePetJson, Pet.class);
+        Assertions.assertEquals(pet, updatedpet);
+    }
 }

@@ -1,6 +1,7 @@
 package com.kleim.pets_owners.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kleim.pets_owners.models.user.User;
 import com.kleim.pets_owners.models.user.UserDTO;
@@ -14,8 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -76,4 +79,65 @@ class UserServiceTest {
         org.assertj.core.api.Assertions.assertThat(user).usingRecursiveComparison().isEqualTo(userJson);
     }
 
+
+    @Test
+    void deleteUser() throws Exception {
+        var user = new User(
+                null,
+                "somy-body",
+                "kitkatorgnew@gmail.com",
+                21,
+                List.of()
+        );
+        String userJson = objectMapper.writeValueAsString(user);
+        String deleteUserJsonMax = mockMvc.perform(delete("/users/{id}", 0)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        Assertions.assertTrue(deleteUserJsonMax.toLowerCase().contains("not found") || deleteUserJsonMax.toLowerCase().contains("error"));
+
+    }
+
+
+    @Test
+    void updateUserValidSuccess() throws Exception {
+        var user = new User(
+                1L,
+                "somy-body",
+                "kitkatorgnew@gmail.com",
+                21,
+                List.of()
+        );
+        String userJson = objectMapper.writeValueAsString(user);
+        String deleteUserJson = mockMvc.perform(put("/users/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        var updatedUser = objectMapper.readValue(deleteUserJson, User.class);
+        Assertions.assertEquals(user, updatedUser);
+    }
+
+    @Test
+    void updateUserValidDataSuccess() throws Exception {
+        long userId = 1L;
+        var user = new User(
+                userId,
+                "name",
+                "newemail@example.com",
+                30,
+                List.of());
+        String userJson = objectMapper.writeValueAsString(user);
+
+        mockMvc.perform(put("/users/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(userJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("name"))
+                .andExpect(jsonPath("$.email").value("newemail@example.com"))
+                .andExpect(jsonPath("$.age").value(30));
+    }
 }
